@@ -3,8 +3,9 @@
 import random as r
 import time
 
-class Nash:
-    def __init__(self, hp, atk, defense, s1=None, s2=None, s3=None, ultima=None):
+class main_character:
+    def __init__(self, name, hp, atk, defense, s1=None, s2=None, s3=None, ultima=None):
+        self.name = name
         self.hp = hp
         self.atk = atk
         self.defense = defense
@@ -17,7 +18,7 @@ class Nash:
         return "A young venturer of the east—travelling in pursuit of his ultimate calling."
         
     def attack(self, enemy):
-        enemy.hpdecrease(self.atk)
+        enemy.hp -= self.atk
         return f"Enemy has taken {self.atk}"
     
     def death(self):
@@ -27,15 +28,15 @@ class Nash:
             return "Game Over"
             
         
-class Enemy(Nash):
+class Enemy(main_character):
     def __init__(self):
-        super().__init__(50, r.randrange(5), 2, "Basic Attack", "Guard Down")
+        super().__init__("Bandit", 50, r.randrange(5), 2, "Basic Attack", "Guard Down")
     
     
 
-main = Nash(
-    100, r.randrange(10), 5, "Valhalla", "Nordic Resolution", 
+main = main_character(
+    "Nash", 100, r.randrange(10), 5, "Valhalla", "Nordic Resolution", 
     "Eye of the Tiger", "Art of Destruction")
+    
 print(main)
-    
-    
+print(main.attack(Enemy()))
