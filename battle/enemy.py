@@ -1,5 +1,6 @@
 import pygame
 import random
+import time
 
 class Enemy:
     def __init__(self, x, y, name, width, height,  min_damage, max_damage, health=100, defense=0, speed=0):
@@ -17,11 +18,11 @@ class Enemy:
         self.speed = speed
         self.statusbox = pygame.image.load("img/statusbox/knight.png")
         
-    def draw(self, screen, font):
+    def draw(self, screen, paused):
         screen.blit(self.image, self.rect) 
         enemy_text = self.font.render(self.name, True, (255, 0, 0))
-        enemy_text_rect = enemy_text.get_rect(topleft=(self.x + 230, self.y - 70))
-        screen.blit(enemy_text, (self.x + 230, self.y - 70))
+        enemy_text_rect = enemy_text.get_rect(topleft=(self.x + 210, self.y - 70))
+        screen.blit(enemy_text, (self.x + 210, self.y - 70))
 
         hp_bar_width = 100
         hp_bar_height = 10
@@ -32,11 +33,18 @@ class Enemy:
         text_x = self.x + 210 + (hp_bar_width - hp_text.get_width()) // 2  
         text_y = self.y - 28 + (hp_bar_height - hp_text.get_height()) // 2 
         screen.blit(hp_text, (text_x, text_y)) 
+        
+        self.handle_mouse_over(screen, paused)
 
-        if enemy_text_rect.collidepoint(pygame.mouse.get_pos()):
-            enemy_text = self.font.render(self.name, True, (128, 128, 128))
-            screen.blit(enemy_text, (self.x + 230, self.y - 70))
-            screen.blit(self.statusbox, (50, 10))
+    def handle_mouse_over(self, screen, paused):
+        if not paused:
+            enemy_text_rect = self.font.render(self.name, True, (255, 0, 0)).get_rect(topleft=(self.x + 210, self.y - 70))
+            if enemy_text_rect.collidepoint(pygame.mouse.get_pos()):
+                enemy_text = self.font.render(self.name, True, (128, 128, 128))
+                screen.blit(enemy_text, (self.x + 210, self.y - 70))
+                screen.blit(self.statusbox, (50, 10))
+
               
     def attack(self):
+        random.seed(time.time())
         return random.randint(self.min_damage, self.max_damage)

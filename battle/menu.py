@@ -23,24 +23,30 @@ class Menu:
             for i, rect in enumerate(self.option_rects):
                 if rect.collidepoint(event.pos):
                     self.state = i
-        print(f"Current state: {self.state}, Selected skill: {self.options[self.state]}") 
+        # print(f"Current state: {self.state}, Selected skill: {self.options[self.state]}") 
         return self.options[self.state]
 
     def draw(self, screen, font):
-        total_width = sum(font.size(option)[0] + 100 for option in self.options[:len(self.options)//2]) - 100
+        fill_color = pygame.Color('#223953')
+        border_color = pygame.Color('#000000')
+        total_width = sum(font.size(option)[0] + 100 for option in self.options) - 100 
+        x = screen.get_width() // 2 - total_width // 2  
         if len(self.options) <= 3:
-            x = (screen.get_width() // 2 - total_width // 2) - 150
-            y = screen.get_height() - 60
+            y = screen.get_height() - 70
         else:
-            x = screen.get_width() // 2 - total_width // 2
             y = screen.get_height() - 120
+            x = 450
         self.option_rects = []
         for i, option in enumerate(self.options):
             if i == len(self.options) // 2 and len(self.options) > 3:  
-                y += 60  
-                x = screen.get_width() // 2 - total_width // 2  
-            color = (0, 255, 255) if i == self.state else (0, 0, 0)
+                y += 50  
+                x = 450
+            color = (0, 255, 255) if i == self.state else (255, 255, 255)
             text = font.render(option, True, color)
-            rect = screen.blit(text, (x, y))
-            self.option_rects.append(rect)
-            x += font.size(option)[0] + 100
+            text_rect = text.get_rect(center=(x + font.size(option)[0] // 2, y + font.size(option)[1] // 2))
+            option_rect = pygame.Rect(x-10, y-2, font.size(option)[0] + 20, font.size(option)[1] + 5)
+            pygame.draw.rect(screen, fill_color, option_rect)
+            pygame.draw.rect(screen, border_color, option_rect, 5)
+            screen.blit(text, text_rect)
+            self.option_rects.append(option_rect)
+            x += font.size(option)[0] + 100 
