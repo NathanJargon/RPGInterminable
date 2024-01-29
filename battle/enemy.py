@@ -1,0 +1,42 @@
+import pygame
+import random
+
+class Enemy:
+    def __init__(self, x, y, name, width, height,  min_damage, max_damage, health=100, defense=0, speed=0):
+        self.y = y
+        self.x = x
+        self.name = name
+        self.rect = pygame.Rect(x, y, width, height)
+        self.image = pygame.transform.scale(pygame.image.load('img/enemy.png'), (width//1.5, height//1.5)) 
+        self.font = pygame.font.Font('fonts/Oswald.ttf', 24)
+        self.hp_text = pygame.font.Font('fonts/Oswald.ttf', 14)
+        self.health = health
+        self.min_damage = min_damage
+        self.max_damage = max_damage
+        self.defense = defense
+        self.speed = speed
+        self.statusbox = pygame.image.load("img/statusbox/knight.png")
+        
+    def draw(self, screen, font):
+        screen.blit(self.image, self.rect) 
+        enemy_text = self.font.render(self.name, True, (255, 0, 0))
+        enemy_text_rect = enemy_text.get_rect(topleft=(self.x + 230, self.y - 70))
+        screen.blit(enemy_text, (self.x + 230, self.y - 70))
+
+        hp_bar_width = 100
+        hp_bar_height = 10
+        pygame.draw.rect(screen, (128, 128, 128), (self.x + 210, self.y - 30, hp_bar_width, hp_bar_height + 5)) 
+        pygame.draw.rect(screen, (255, 0, 0), (self.x + 210, self.y - 30, hp_bar_width * (self.health / 100), hp_bar_height + 5))
+
+        hp_text = self.hp_text.render(f"HP: {self.health}", True, (0, 0, 0))
+        text_x = self.x + 210 + (hp_bar_width - hp_text.get_width()) // 2  
+        text_y = self.y - 28 + (hp_bar_height - hp_text.get_height()) // 2 
+        screen.blit(hp_text, (text_x, text_y)) 
+
+        if enemy_text_rect.collidepoint(pygame.mouse.get_pos()):
+            enemy_text = self.font.render(self.name, True, (128, 128, 128))
+            screen.blit(enemy_text, (self.x + 230, self.y - 70))
+            screen.blit(self.statusbox, (50, 10))
+              
+    def attack(self):
+        return random.randint(self.min_damage, self.max_damage)
