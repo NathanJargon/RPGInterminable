@@ -37,23 +37,28 @@ game_text = pygame.font.Font('fonts/Oswald.ttf', 24)
 
 pygame.mixer.music.load("ost/fight1.mp3")
 pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0)
  
- 
+
+player = Player(0, 390, 1000, 500)
+enemy = Enemy(WIDTH - 650, 200, "—Knight—",  800, 650, 10, 20)
+skills = MenuAbilityManager()
+player_attack_calculated = player.attack // 5
+equipped_skills = player.check_equipped_skills()
+equipped_skill_descriptions = [skills.get_description_by_name(name) for name in equipped_skills]
+
 menu_state = 0
 submenu_state = 0
 
-main_menu = Menu(["Skill", "Items", "Run"])
+main_menu = Menu(["Skill", "Items", "Run"], equipped_skill_descriptions)
 submenus = {
-    "Skill": Menu(["Basic Attack    ", "Langguiser", "Divine Divide  ", "Soul Steal"]),
-    "Items": Menu(["Strength Potion", "Carnival", "Blood Potion     ", "Resurrection"]),
+    "Skill": Menu(equipped_skills),
+    "Items": Menu(["Strength Potion", "Carnival", "Blood Potion", "Resurrection"]),
     "Run": Menu(["Confirm", "Cancel"])
 }
 
 current_menu = main_menu
 
-player = Player(0, 390, 1000, 500)
-enemy = Enemy(WIDTH - 650, 200, "—Knight—",  800, 650, 10, 20)
-skills = MenuAbilityManager()
 
 def enemyAttack():
     pygame.time.delay(1000)
@@ -65,7 +70,7 @@ def enemyAttack():
     return reduced_damage
 
 def calculate_damage_after_defense(damage, defense):
-    reduced_damage = damage - defense
+    reduced_damage = (damage + player_attack_calculated) - defense
     reduced_damage = max(reduced_damage, 0)
     random.seed(time.time())
     reduced_damage = reduced_damage * random.uniform(0.85, 1.15)
@@ -101,14 +106,14 @@ while running:
                     else:
                         if main_menu.state == 0: 
                             skill_name = selected_option
-                            damage = skills.use_skill(skill_name)
-                            if damage is not None:
-                                reduced_damage = calculate_damage_after_defense(damage, enemy.defense)
-                                # print("Player:", reduced_damage)
-                                enemy.health = max(enemy.health - reduced_damage, 0)
-                                player_turn = False
-                                menu_current = menu_rect
-                                current_menu = main_menu
+                            if skill_name != "None":
+                                damage, player.stamina = skills.use_skill(skill_name, player.stamina) 
+                                if damage is not None:
+                                    reduced_damage = calculate_damage_after_defense(damage, enemy.defense)
+                                    enemy.health = max(enemy.health - reduced_damage, 0)
+                                    player_turn = False
+                                    menu_current = menu_rect
+                                    current_menu = main_menu
                         elif main_menu.state == 1:
                             item_name = selected_option
                             hp_gain = skills.use_item(item_name)
@@ -142,12 +147,14 @@ while running:
                     else:
                         if main_menu.state == 0: 
                             skill_name = selected_option
-                            damage = skills.use_skill(skill_name)
-                            if damage is not None:
-                                reduced_damage = calculate_damage_after_defense(damage, enemy.defense)
-                                enemy.health = max(enemy.health - reduced_damage, 0)
-                                player_turn = False
-                                menu_current = menu_rect
+                            if skill_name != "None":
+                                damage, player.stamina = skills.use_skill(skill_name, player.stamina) 
+                                if damage is not None:
+                                    reduced_damage = calculate_damage_after_defense(damage, enemy.defense)
+                                    enemy.health = max(enemy.health - reduced_damage, 0)
+                                    player_turn = False
+                                    menu_current = menu_rect
+                                    current_menu = main_menu
                         elif main_menu.state == 1:
                             item_name = selected_option
                             hp_gain = skills.use_item(item_name)
