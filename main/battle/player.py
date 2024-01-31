@@ -46,7 +46,7 @@ class Player:
     def draw_stamina_bar(self, screen, font):
         bar_width = 200
         bar_height = 20
-        bar_x = screen.get_width() - bar_width - 430
+        bar_x = screen.get_width() - bar_width - 450
         bar_y = screen.get_height() - bar_height - 10 
 
         pygame.draw.rect(screen, (128, 128, 128), (bar_x, bar_y, bar_width, bar_height))
