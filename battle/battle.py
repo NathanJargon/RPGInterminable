@@ -102,6 +102,17 @@ while running:
             pygame.draw.rect(screen, border_color, description_rect, 5)
             screen.blit(text, text_rect)
 
+    if player_turn and current_menu == submenus["Items"]:
+        menu_ability_manager = MenuAbilityManager()
+        item_name = (current_menu.options[current_menu.state]).split(":")[0]
+        if item_name != "None":
+            description = menu_ability_manager.items[item_name][0][2]
+            text = game_text.render(description, True, (255, 255, 255))
+            text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT - 180))
+            description_rect = pygame.Rect(text_rect.left - 10, text_rect.top - 2, text_rect.width + 20, text_rect.height + 5)
+            pygame.draw.rect(screen, fill_color, description_rect)
+            pygame.draw.rect(screen, border_color, description_rect, 5)
+            screen.blit(text, text_rect)
         
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -135,8 +146,9 @@ while running:
                                     current_menu = main_menu
                         elif main_menu.state == 1:
                             item_name = selected_option
-                            if item_name != "None":
-                                hp_gain, mp_gain = skills.use_item(item_name)
+                            item_count = (current_menu.options[current_menu.state]).split(":")[1]
+                            if item_name != "None" and int(item_count) > 0:
+                                hp_gain, mp_gain, new_count = skills.use_item(item_name)
                                 if hp_gain is not None:
                                     player.health = min(player.health + hp_gain, 100)
                                 if mp_gain is not None:
@@ -144,6 +156,11 @@ while running:
                                 player_turn = False
                                 menu_current = menu_rect
                                 current_menu = main_menu
+
+                                item_name = item_name.split(":")[0].strip()
+                                submenus["Items"].options[submenus["Items"].state] = f"{item_name}: {new_count}"
+                                
+                                
                         elif main_menu.state == 2:
                             if selected_option == "Confirm":
                                 running = False
@@ -177,10 +194,13 @@ while running:
                                     player_turn = False
                                     menu_current = menu_rect
                                     current_menu = main_menu
+                                    
+                                    
                         elif main_menu.state == 1:
                             item_name = selected_option
-                            if item_name != "None":
-                                hp_gain, mp_gain = skills.use_item(item_name)
+                            item_count = (current_menu.options[current_menu.state]).split(":")[1]
+                            if item_name != "None" and int(item_count) > 0:
+                                hp_gain, mp_gain, new_count = skills.use_item(item_name)
                                 if hp_gain is not None:
                                     player.health = min(player.health + hp_gain, 100)
                                 if mp_gain is not None:
@@ -188,6 +208,11 @@ while running:
                                 player_turn = False
                                 menu_current = menu_rect
                                 current_menu = main_menu
+
+                                item_name = item_name.split(":")[0].strip()
+                                submenus["Items"].options[submenus["Items"].state] = f"{item_name}: {new_count}"
+                                
+                                
                             if hp_gain is not None:
                                 player.health = min(player.health + hp_gain, 100)
                                 player_turn = False

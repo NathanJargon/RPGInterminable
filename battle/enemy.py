@@ -11,6 +11,7 @@ class Enemy:
         self.image = pygame.transform.scale(pygame.image.load('img/enemy.png'), (width//1.5, height//1.5)) 
         self.font = pygame.font.Font('fonts/Oswald.ttf', 24)
         self.hp_text = pygame.font.Font('fonts/Oswald.ttf', 14)
+        self.hover_text = pygame.font.Font('fonts/Oswald.ttf', 12)
         self.health = health
         self.min_damage = min_damage
         self.max_damage = max_damage
@@ -23,7 +24,9 @@ class Enemy:
         enemy_text = self.font.render(self.name, True, (255, 0, 0))
         enemy_text_rect = enemy_text.get_rect(topleft=(self.x + 210, self.y - 70))
         screen.blit(enemy_text, (self.x + 210, self.y - 70))
-
+        hover_text = self.hover_text.render("HOVER to INSPECT Enemy", True, (255, 0, 0))
+        screen.blit(hover_text, (self.x + 210, self.y - 80))
+        
         hp_bar_width = 100
         hp_bar_height = 10
         pygame.draw.rect(screen, (128, 128, 128), (self.x + 210, self.y - 30, hp_bar_width, hp_bar_height + 5)) 

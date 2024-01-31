@@ -39,7 +39,7 @@ class Menu:
             x = (screen.get_width() // 2 - total_width // 2) - 90
         else:
             y = screen.get_height() - 120
-            x = (screen.get_width() // 2 - total_width // 2 ) - 50
+            x = (screen.get_width() // 2 - total_width // 2 ) - 20
         self.option_rects = []
         for i, option in enumerate(self.options):
             if i == len(self.options) // 2 and len(self.options) > 3:  

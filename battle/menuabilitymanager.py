@@ -4,7 +4,6 @@ from inventory import Inventory
 
 class MenuAbilityManager:
     def __init__(self):
-        self.inventory = Inventory()
         
         self.skills = {
             "Basic Attak": (10, 20, 5, "Deals 10-20 | 5 Stamina Spent"),
@@ -20,10 +19,10 @@ class MenuAbilityManager:
         }
 
         self.items = {
-            "HP Potion": ((20, 0, "Restores 20 HP"), 5),
-            "MP Potion": ((0, 20, "Restores 20 MP"), 5),
-            "Mixed Potion": ((10, 10, "Restores 10 HP and 10 MP"), 5),
-            "Revival Potion": ((30, 30, "Restores 30 HP and 30 MP"), 5)
+            "HP Potion": ((20, 0, "Restores 20 HP"), 0),
+            "Stamina Potion": ((0, 20, "Restores 20 MP"), 0),
+            "Mixed Potion": ((10, 10, "Restores 10 HP and 10 MP"), 0),
+            "Revival Potion": ((30, 30, "Restores 30 HP and 30 MP"), 0)
         }
         
         self.run = {
@@ -31,6 +30,9 @@ class MenuAbilityManager:
             "Cancel": True
         }
 
+        self.inventory = Inventory()
+        self.inventory.add_debug_items()
+        
     def use_skill(self, skill_name, player_stamina):
         if skill_name in self.skills:
             min_damage, max_damage, stamina_cost, description = self.skills[skill_name]
@@ -42,12 +44,12 @@ class MenuAbilityManager:
     
     def use_item(self, item_name):
         item_name = item_name.strip().split(":")[0]
-        if item_name in self.items:
-            effects, count = self.items[item_name]
+        if item_name in self.inventory.items:
+            effects, count = self.inventory.items[item_name]
             if count > 0:
                 hp_restored, mp_restored, description = effects
                 new_count = count - 1
-                self.items[item_name] = (effects, new_count)
+                self.inventory.update_item(item_name, (effects, new_count))
                 return hp_restored, mp_restored, new_count
         return 0, 0, 0
 

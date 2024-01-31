@@ -16,8 +16,7 @@ class Player:
         self.skills = []
         self.items = []
         self.menu_ability_manager = menu_ability_manager
-        self.inventory = self.menu_ability_manager.inventory 
-        self.inventory.add_debug_items()
+        self.inventory = self.menu_ability_manager.inventory
         self.unlock_skills()
         
     def gain_exp(self, amount):
@@ -86,7 +85,7 @@ class Player:
 
     def check_equipped_items(self):
         equipped_items = []
-        for item_name, quantity in self.inventory.items.items():
+        for item_name, (effects, quantity) in self.inventory.items.items():
             if quantity >= 1:
                 equipped_items.append(f"{item_name}: {quantity}")
         while len(equipped_items) < 4:
