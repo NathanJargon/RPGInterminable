@@ -1,7 +1,8 @@
 import pygame
+from inventory import Inventory
 
 class Player:
-    def __init__(self, x, y, width, height, health=100, stamina=100, attack=10, defense=5, speed=5, level=2, exp=0):
+    def __init__(self, x, y, width, height, menu_ability_manager, health=100, stamina=100, attack=10, defense=5, speed=5, level=2, exp=0):
         self.rect = pygame.Rect(x, y, width, height)
         self.health = health
         self.attack = attack
@@ -13,6 +14,10 @@ class Player:
         self.image = pygame.transform.scale(pygame.image.load('img/player.png'), (width//1.5, height//1.5)) 
         self.level = level
         self.skills = []
+        self.items = []
+        self.menu_ability_manager = menu_ability_manager
+        self.inventory = self.menu_ability_manager.inventory 
+        self.inventory.add_debug_items()
         self.unlock_skills()
         
     def gain_exp(self, amount):
@@ -78,33 +83,28 @@ class Player:
         while len(equipped_skills) < 4:
             equipped_skills.append("None")
         return equipped_skills
+
+    def check_equipped_items(self):
+        equipped_items = []
+        for item_name, quantity in self.inventory.items.items():
+            if quantity >= 1:
+                equipped_items.append(f"{item_name}: {quantity}")
+        while len(equipped_items) < 4:
+            equipped_items.append("None")
+        return equipped_items
     
     def unlock_skills(self):
         skills_to_unlock = {
-            1: "Basic Attack",
+            1: "Basic Attak",
             2: "Langguiser",
             3: "Divine Divide",
             4: "Soul Steal",
             5: "Swift Strike",
-            6: "Honor's Edge",
-            7: "Sakura Slash",
-            8: "Rising Sun Strike",
+            6: "Honor Edge",
+            7: "Sakura Slice",
+            8: "Rising Sun",
             9: "Zen Blade",
-            10: "Thundering Katana",
-            11: "Lotus Fury",
-            12: "Crescent Moon Cut",
-            13: "Serenity Sweep",
-            14: "Tranquil Blade",
-            15: "Dragon's Breath Slash",
-            16: "Storm of Petals",
-            17: "Shogun's Wrath",
-            18: "Celestial Severance",
-            19: "Whispering Winds Slice",
-            20: "Eternal Moonstrike",
-            21: "Phoenix Dance",
-            22: "Tsunami Blade",
-            23: "Silent Storm Slash",
-            24: "Harmony's Embrace"
+            10: "Thunder Kat",
         }
         
         for level, skill in skills_to_unlock.items():

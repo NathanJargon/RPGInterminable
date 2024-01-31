@@ -7,6 +7,7 @@ from enemy import Enemy
 from player import Player
 from menuabilitymanager import MenuAbilityManager
 from pause import Pause
+from inventory import Inventory
 pygame.init()
 pygame.mixer.init()
 pygame.display.set_caption("Interminable")
@@ -34,17 +35,20 @@ font = pygame.font.Font(None, 36)
 hp_text = pygame.font.Font("fonts/Oswald.ttf", 20)
 game_text = pygame.font.Font('fonts/Oswald.ttf', 24)
 
-
+fill_color = pygame.Color('#223953')
+border_color = pygame.Color('#000000')
 pygame.mixer.music.load("ost/fight1.mp3")
 pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(0)
  
-
-player = Player(0, 390, 1000, 500)
+inventory = Inventory()
+menu_ability_manager = MenuAbilityManager()
+player = Player(0, 390, 1000, 500, menu_ability_manager)
 enemy = Enemy(WIDTH - 650, 200, "—Knight—",  800, 650, 10, 20)
 skills = MenuAbilityManager()
 player_attack_calculated = player.attack // 5
 equipped_skills = player.check_equipped_skills()
+equipped_items = player.check_equipped_items()
 equipped_skill_descriptions = [skills.get_description_by_name(name) for name in equipped_skills]
 
 menu_state = 0
@@ -53,7 +57,7 @@ submenu_state = 0
 main_menu = Menu(["Skill", "Items", "Run"], equipped_skill_descriptions)
 submenus = {
     "Skill": Menu(equipped_skills),
-    "Items": Menu(["Strength Potion", "Carnival", "Blood Potion", "Resurrection"]),
+    "Items": Menu(equipped_items),
     "Run": Menu(["Confirm", "Cancel"])
 }
 
@@ -80,10 +84,25 @@ while running:
     
     screen.fill((0, 0, 0))
     screen.blit(pygame.transform.scale(bg, (WIDTH, HEIGHT)), (0, 0))
-
+    enemy.draw(screen, font)
+    
     if not player_turn:
         enemyDamageText = enemyAttack()
         player_turn = True
+        
+    if player_turn and current_menu == submenus["Skill"]:
+        menu_ability_manager = MenuAbilityManager()
+        skill_name = current_menu.options[current_menu.state]
+        if skill_name != "None":
+            description = menu_ability_manager.skills[skill_name][3]
+            text = game_text.render(description, True, (255, 255, 255))
+            text_rect = text.get_rect(center=(WIDTH // 2, HEIGHT - 180))
+            description_rect = pygame.Rect(text_rect.left - 10, text_rect.top - 2, text_rect.width + 20, text_rect.height + 5)
+            pygame.draw.rect(screen, fill_color, description_rect)
+            pygame.draw.rect(screen, border_color, description_rect, 5)
+            screen.blit(text, text_rect)
+
+        
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -116,9 +135,12 @@ while running:
                                     current_menu = main_menu
                         elif main_menu.state == 1:
                             item_name = selected_option
-                            hp_gain = skills.use_item(item_name)
-                            if hp_gain is not None:
-                                player.health = min(player.health + hp_gain, 100)
+                            if item_name != "None":
+                                hp_gain, mp_gain = skills.use_item(item_name)
+                                if hp_gain is not None:
+                                    player.health = min(player.health + hp_gain, 100)
+                                if mp_gain is not None:
+                                    player.stamina = min(player.stamina + mp_gain, 100)
                                 player_turn = False
                                 menu_current = menu_rect
                                 current_menu = main_menu
@@ -157,7 +179,15 @@ while running:
                                     current_menu = main_menu
                         elif main_menu.state == 1:
                             item_name = selected_option
-                            hp_gain = skills.use_item(item_name)
+                            if item_name != "None":
+                                hp_gain, mp_gain = skills.use_item(item_name)
+                                if hp_gain is not None:
+                                    player.health = min(player.health + hp_gain, 100)
+                                if mp_gain is not None:
+                                    player.stamina = min(player.stamina + mp_gain, 100)
+                                player_turn = False
+                                menu_current = menu_rect
+                                current_menu = main_menu
                             if hp_gain is not None:
                                 player.health = min(player.health + hp_gain, 100)
                                 player_turn = False
@@ -168,7 +198,6 @@ while running:
                             else:
                                 current_menu = main_menu
                                 menu_current = menu_rect
-                        current_menu = main_menu
                 elif event.button == 3:
                     if current_menu != main_menu:
                         current_menu = main_menu
@@ -188,7 +217,6 @@ while running:
     if not paused:
         enemy.handle_mouse_over(screen, paused) 
         
-    enemy.draw(screen, font)
     screen.blit(menu_current, (0, HEIGHT-150))
     player.draw(screen, hp_text)
     current_menu.draw(screen, font)
@@ -201,7 +229,7 @@ while running:
                 screen.blit(text, text_rect) 
         elif main_menu.state == 1:
             if hp_gain is not None:
-                text = game_text.render(f"You selected {selected_option.strip()} and healed {hp_gain} HP", True, (0, 0, 0))
+                text = game_text.render(f"You selected {selected_option.split(':')[0]} and healed {hp_gain} HP and {mp_gain} MP", True, (0, 0, 0))
                 text_rect = text.get_rect(center=(WIDTH // 2, (HEIGHT // 2) + 240))
                 screen.blit(text, text_rect) 
 
