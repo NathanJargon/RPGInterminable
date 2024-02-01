@@ -183,7 +183,10 @@ def main():
                     selected_option = current_menu.handle_event(event)
                     if event.button == 1 and not paused:
                         if current_menu == main_menu:
-                            menu_current = menu_ability
+                            if selected_option == 'Run': 
+                                menu_current = menu_rect 
+                            else:
+                                menu_current = menu_ability
                             current_menu = submenus[selected_option]
                         else:
                             if main_menu.state == 0: 
