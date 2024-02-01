@@ -3,19 +3,23 @@ import os
 import subprocess
 import sys
 import pygame.gfxdraw
-
 pygame.init()
+pygame.mixer.init()
 pygame.display.set_caption("Interminable - Intro")
 
 WIDTH, HEIGHT = 1270, 720
 FPS = 60
 
+pygame.mixer.music.load("ost/Beckon of the Grave.mp3")
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(50)
+    
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 start_screen_image = pygame.image.load('img/intro/bgintro.png')
 image_surface = pygame.image.load('img/intro/introbutton.png')
 
-font = pygame.font.Font("fonts/Oswald.ttf", 40)  # Decrease the font size to 40
+font = pygame.font.Font("fonts/Oswald.ttf", 40) 
 
 text_surface = font.render('Press Any Key to Continue', True, (0, 0, 0))
 
@@ -69,6 +73,7 @@ while running:
                             pygame.time.delay(10)
 
                         running = False
+                        pygame.mixer.music.stop()
                         pygame.display.quit() 
                         subprocess.call(['python', 'main/battle/battle.py'])
                         
@@ -83,6 +88,7 @@ while running:
                         pygame.time.delay(10)
 
                     running = False
+                    pygame.mixer.music.stop()
                     pygame.display.quit() 
                     subprocess.call(['python', 'main/battle/battle.py'])
                     

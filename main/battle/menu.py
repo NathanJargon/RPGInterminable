@@ -15,9 +15,9 @@ class Menu:
         current_time = time.time()
         if event.type == pygame.KEYDOWN:
             if current_time - self.last_key_press_time > self.KEY_PRESS_DELAY:
-                if event.key == pygame.K_LEFT:
+                if event.key in (pygame.K_LEFT, pygame.K_a):
                     self.state = max(0, self.state - 1)
-                elif event.key == pygame.K_RIGHT:
+                elif event.key in (pygame.K_RIGHT, pygame.K_d):
                     self.state = min(len(self.options) - 1, self.state + 1)
                 self.last_key_press_time = current_time
         elif event.type == pygame.MOUSEMOTION:

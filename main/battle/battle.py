@@ -40,7 +40,7 @@ def main():
     border_color = pygame.Color('#000000')
     pygame.mixer.music.load("ost/fight1.mp3")
     pygame.mixer.music.play(-1)
-    pygame.mixer.music.set_volume(0)
+    pygame.mixer.music.set_volume(50)
     
     pause = Pause(screen)
     inventory = Inventory()
@@ -169,7 +169,7 @@ def main():
                                 else:
                                     current_menu = main_menu
                                     menu_current = menu_rect
-                    elif event.key in (pygame.K_LEFT, pygame.K_RIGHT):
+                    elif event.key in (pygame.K_LEFT, pygame.K_a, pygame.K_RIGHT, pygame.K_d):
                         current_menu.handle_event(event)
                     elif event.key == pygame.K_BACKSPACE:
                         if current_menu != main_menu:
