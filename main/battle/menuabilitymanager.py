@@ -6,7 +6,7 @@ class MenuAbilityManager:
     def __init__(self):
         
         self.skills = {
-            "Basic Attak": (10, 20, 5, "Deals 10-20 | 5 Stamina Spent"),
+            "Basic Attack": (10, 20, 5, "Deals 10-20 | 5 Stamina Spent"),
             "Langguiser": (20, 30, 10, "Deals 20-30 | 10 Stamina Spent"),
             "Divine Divide": (30, 40, 15, "Deals 30-40 | 15 Stamina Spent"),
             "Soul Steal": (40, 50, 20, "Deals 40-50 | 20 Stamina Spent"),

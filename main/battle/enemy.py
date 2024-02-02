@@ -7,8 +7,10 @@ class Enemy:
         self.y = y
         self.x = x
         self.name = name
+        self.width = width
+        self.height = height
         self.rect = pygame.Rect(x, y, width, height)
-        self.image = pygame.transform.scale(pygame.image.load('img/enemy.png'), (width//1.5, height//1.5)) 
+        self.image = pygame.transform.scale(pygame.image.load('img/enemy.png'), (self.width//1.5, self.height//1.5)) 
         self.font = pygame.font.Font('fonts/Oswald.ttf', 24)
         self.hp_text = pygame.font.Font('fonts/Oswald.ttf', 14)
         self.hover_text = pygame.font.Font('fonts/Oswald.ttf', 12)
@@ -17,10 +19,15 @@ class Enemy:
         self.max_damage = max_damage
         self.defense = defense
         self.speed = speed
+        self.attacked_already = False
         self.statusbox = pygame.image.load("img/statusbox/knight.png")
-        
-    def draw(self, screen, paused):
-        screen.blit(self.image, self.rect) 
+
+    def attacked(self, screen, image):
+        self.image = pygame.transform.scale(image, (self.width//1.5, self.height//1.5)) 
+        screen.blit(self.image, self.rect)
+
+    def draw(self, screen, paused, image):
+        self.attacked(screen, image) 
         enemy_text = self.font.render(self.name, True, (255, 0, 0))
         enemy_text_rect = enemy_text.get_rect(topleft=(self.x + 210, self.y - 70))
         screen.blit(enemy_text, (self.x + 210, self.y - 70))

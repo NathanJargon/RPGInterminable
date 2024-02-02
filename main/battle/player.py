@@ -94,7 +94,7 @@ class Player:
     
     def unlock_skills(self):
         skills_to_unlock = {
-            1: "Basic Attak",
+            1: "Basic Attack",
             2: "Langguiser",
             3: "Divine Divide",
             4: "Soul Steal",
