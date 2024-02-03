@@ -10,7 +10,7 @@ from pause import Pause
 from inventory import Inventory
 pygame.init()
 pygame.mixer.init()
-pygame.display.set_caption("Interminable - Battle")
+pygame.display.set_caption("Interminable")
 
 def main():
     WIDTH, HEIGHT = 1270, 720

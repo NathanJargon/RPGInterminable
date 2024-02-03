@@ -47,9 +47,7 @@ class Menu:
                 x = (screen.get_width() // 2 - total_width // 2) - 50
             color = (0, 255, 255) if i == self.state else (255, 255, 255)
             text = font.render(option, True, color)
-            # Increase the size of the rectangle for the option
             option_rect = pygame.Rect(x-10, y-2, font.size(option)[0] + 40, font.size(option)[1] + 10)
-            # Calculate the position to center the text in the option rectangle
             text_rect = text.get_rect(center=option_rect.center)
             pygame.draw.rect(screen, fill_color, option_rect)
             pygame.draw.rect(screen, border_color, option_rect, 5)

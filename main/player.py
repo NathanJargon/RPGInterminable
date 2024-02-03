@@ -1,5 +1,4 @@
 import pygame
-from inventory import Inventory
 
 class Player:
     def __init__(self, x, y, width, height, menu_ability_manager, health=100, stamina=100, attack=10, defense=5, speed=5, level=2, exp=0):

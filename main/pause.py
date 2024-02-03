@@ -1,5 +1,6 @@
 import pygame
 from volumeslider import VolumeSlider
+from save_and_load import OutsideGameData
 
 class Pause:
     def __init__(self, screen):
