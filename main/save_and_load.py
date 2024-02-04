@@ -2,7 +2,12 @@ from inventory import Inventory
 from menuabilitymanager import MenuAbilityManager
 from volumeslider import VolumeSlider
 import pygame
-import json
+import pickle
+import os
+import sys
+from os import path
+script_dir = getattr(sys, '_MEIPASS', path.abspath(os.path.dirname(__file__)))
+sys.path.insert(0, os.path.join(script_dir, 'main'))
 
 class OutsideGameData:
     def __init__(self, screen, current_room, player_pos, grid, visibility_grid, unlocked, unknown_rendered, text_show):
@@ -22,7 +27,7 @@ class OutsideGameData:
         self.overlay = pygame.Surface((self.screen_width, self.screen_height)) 
         self.overlay.set_alpha(128)  
         self.overlay.fill((0, 0, 0))
-        self.box = pygame.image.load('img/pause.png') 
+        self.box = pygame.image.load(self.resource_path('img/pause.png')) 
         self.box_rect = self.box.get_rect(center=(self.screen_width // 2, self.screen_height // 2))
         self.slider = VolumeSlider(self.box_rect.x + 50, self.box_rect.y + self.box_rect.height // 2, self.box_rect.width - 100, 20) 
         self.save_button_color = pygame.Color('#FFFFFF')
@@ -30,10 +35,20 @@ class OutsideGameData:
         
         # Create save and load buttons
         self.button_height = 50
-        self.font = pygame.font.Font("fonts/Oswald.ttf", 24)
+        self.font = pygame.font.Font(self.resource_path("fonts/Oswald.ttf"), 24)
         self.save_button = pygame.Rect(self.slider.rect.x, self.slider.rect.bottom + 10, self.slider.rect.width, self.button_height)
         self.load_button = pygame.Rect(self.slider.rect.x, self.save_button.bottom + 10, self.slider.rect.width, self.button_height)
 
+    def resource_path(self, relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        try:
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
+    
+    
     def reset_game(self, game_data=None):
         if game_data is None:
             self.current_room = None
@@ -53,14 +68,17 @@ class OutsideGameData:
             self.text_show = game_data['text_show']
 
     def save_game(self, filename):
-        with open(filename, 'w') as f:
-            json.dump(self.current_room_save(), f)
+        with open(filename, 'wb') as f:
+            pickle.dump(self.current_room_save(), f)
 
     @staticmethod
     def load_game(filename):
-        with open(filename, 'r') as f:
-            return json.load(f)
-
+        try:
+            with open(filename, 'rb') as f:
+                return pickle.load(f)
+        except EOFError:
+            pass
+        
     def current_room_save(self):
         return {
             'current_room': self.current_room,

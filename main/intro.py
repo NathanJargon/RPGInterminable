@@ -6,21 +6,42 @@ import pygame.gfxdraw
 pygame.init()
 pygame.mixer.init()
 pygame.display.set_caption("Interminable")
+from os import path
+script_dir = getattr(sys, '_MEIPASS', path.abspath(os.path.dirname(__file__)))
+sys.path.insert(0, os.path.join(script_dir, 'main'))
 
 def main():
+    def resource_path(relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        try:
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
+
     WIDTH, HEIGHT = 1270, 720
     FPS = 60
-
-    pygame.mixer.music.load("ost/Beckon of the Grave.mp3")
+    
+    #FOR BUILD
+    icon_path = resource_path('img/logo.ico')
+    start_screen_path = resource_path("img/intro/bgintro.png")
+    image_surface_path = resource_path("img/intro/introbutton.png")
+    font_path = resource_path("fonts/Oswald.ttf")
+    sound_path = resource_path("ost/Beckon of the Grave.mp3")
+    
+    
+    icon = pygame.display.set_icon(pygame.image.load(icon_path))
+    pygame.mixer.music.load(sound_path)
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(50)
         
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-    start_screen_image = pygame.image.load('img/intro/bgintro.png')
-    image_surface = pygame.image.load('img/intro/introbutton.png')
+    start_screen_image = pygame.image.load(start_screen_path)
+    image_surface = pygame.image.load(image_surface_path)
 
-    font = pygame.font.Font("fonts/Oswald.ttf", 40) 
+    font = pygame.font.Font(font_path, 40) 
 
     text_surface = font.render('Press Any Key to Continue', True, (0, 0, 0))
 

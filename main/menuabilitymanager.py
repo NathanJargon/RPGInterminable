@@ -1,6 +1,11 @@
 import random
 import time
 from inventory import Inventory
+import os
+import sys
+from os import path
+script_dir = getattr(sys, '_MEIPASS', path.abspath(os.path.dirname(__file__)))
+sys.path.insert(0, os.path.join(script_dir, 'main'))
 
 class MenuAbilityManager:
     def __init__(self):

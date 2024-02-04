@@ -1,14 +1,28 @@
 import pygame
 pygame.init()
+import os
+import sys
+from os import path
+script_dir = getattr(sys, '_MEIPASS', path.abspath(os.path.dirname(__file__)))
+sys.path.insert(0, os.path.join(script_dir, 'main'))
 
 class VolumeSlider:
     def __init__(self, x, y, width, height):
         self.rect = pygame.Rect(x, y, width, height)
         self.volume = pygame.mixer.music.get_volume()
-        self.font = pygame.font.Font("fonts/Oswald.ttf", 24)
-        self.hpfont = pygame.font.Font("fonts/Oswald.ttf", 14)
+        self.font = pygame.font.Font(self.resource_path("fonts/Oswald.ttf"), 24)
+        self.hpfont = pygame.font.Font(self.resource_path("fonts/Oswald.ttf"), 14)
         self.dragging = False  # Add a flag to track whether the slider is being dragged
 
+    def resource_path(self, relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        try:
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
+    
     def draw(self, screen):
         pygame.draw.rect(screen, (255, 255, 255), self.rect)
         pygame.draw.rect(screen, (0, 255, 0), (self.rect.x, self.rect.y, self.volume * self.rect.width, self.rect.height))

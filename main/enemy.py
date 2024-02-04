@@ -1,6 +1,11 @@
 import pygame
 import random
 import time
+import os 
+import sys
+from os import path
+script_dir = getattr(sys, '_MEIPASS', path.abspath(os.path.dirname(__file__)))
+sys.path.insert(0, os.path.join(script_dir, 'main'))
 
 class Enemy:
     def __init__(self, x, y, name, width, height,  min_damage, max_damage, health=100, defense=0, speed=0):
@@ -10,18 +15,27 @@ class Enemy:
         self.width = width
         self.height = height
         self.rect = pygame.Rect(x, y, width, height)
-        self.image = pygame.transform.scale(pygame.image.load('img/enemy.png'), (self.width//1.5, self.height//1.5)) 
-        self.font = pygame.font.Font('fonts/Oswald.ttf', 24)
-        self.hp_text = pygame.font.Font('fonts/Oswald.ttf', 14)
-        self.hover_text = pygame.font.Font('fonts/Oswald.ttf', 12)
+        self.image = pygame.transform.scale(pygame.image.load(self.resource_path('img/enemy.png')), (self.width//1.5, self.height//1.5)) 
+        self.font = pygame.font.Font(self.resource_path('fonts/Oswald.ttf'), 24)
+        self.hp_text = pygame.font.Font(self.resource_path('fonts/Oswald.ttf'), 14)
+        self.hover_text = pygame.font.Font(self.resource_path('fonts/Oswald.ttf'), 12)
         self.health = health
         self.min_damage = min_damage
         self.max_damage = max_damage
         self.defense = defense
         self.speed = speed
         self.attacked_already = False
-        self.statusbox = pygame.image.load("img/statusbox/knight.png")
+        self.statusbox = pygame.image.load(self.resource_path("img/statusbox/knight.png"))
 
+    def resource_path(self, relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        try:
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
+    
     def attacked(self, screen, image):
         self.image = pygame.transform.scale(image, (self.width//1.5, self.height//1.5)) 
         screen.blit(self.image, self.rect)

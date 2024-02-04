@@ -1,5 +1,10 @@
 import pygame
 import time
+import os
+import sys
+from os import path
+script_dir = getattr(sys, '_MEIPASS', path.abspath(os.path.dirname(__file__)))
+sys.path.insert(0, os.path.join(script_dir, 'main'))
 
 class Menu:
     KEY_PRESS_DELAY = 0.2

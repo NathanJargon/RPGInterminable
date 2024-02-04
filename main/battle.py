@@ -1,5 +1,7 @@
 import pygame
 import random
+import sys
+import os
 import math
 import time
 from menu import Menu
@@ -8,19 +10,30 @@ from player import Player
 from menuabilitymanager import MenuAbilityManager
 from pause import Pause
 from inventory import Inventory
+# from save_and_load import OutsideGameData
 pygame.init()
 pygame.mixer.init()
 pygame.display.set_caption("Interminable")
 
 def main():
+
+    def resource_path(relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        try:
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
+    
     WIDTH, HEIGHT = 1270, 720
     FPS = 60
 
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    icon = pygame.display.set_icon(pygame.image.load("img/icon.png"))
-    menu_rect = pygame.image.load("img/menubox.png")
-    menu_ability = pygame.image.load("img/menuboxability.png")
-    bg = pygame.image.load("img/bg.jpg")
+    icon = pygame.display.set_icon(pygame.image.load(resource_path("img/logo.ico")))
+    menu_rect = pygame.image.load(resource_path("img/menubox.png"))
+    menu_ability = pygame.image.load(resource_path("img/menuboxability.png"))
+    bg = pygame.image.load(resource_path("img/bg.jpg"))
     clock = pygame.time.Clock()
 
     player_turn = True
@@ -33,32 +46,37 @@ def main():
 
     enemy_w, enemy_h = 800, 650
 
-    enemy_attack_sound = pygame.mixer.Sound('ost/sounds/enemy.mp3')
+    enemy_attack_sound = pygame.mixer.Sound(resource_path('ost/sounds/enemy.mp3'))
     enemy_attack_sound.set_volume(50)
-    
-    player_attack_sound = pygame.mixer.Sound('ost/sounds/player.mp3')
+
+    player_attack_sound = pygame.mixer.Sound(resource_path('ost/sounds/player.mp3'))
     player_attack_sound.set_volume(50)
-    
-    attack_image = pygame.image.load('img/attacked.png')
+
+    attack_image = pygame.image.load(resource_path('img/attacked.png'))
     attack_image = pygame.transform.scale(attack_image, (WIDTH, HEIGHT))
-    
-    enemy_image = pygame.image.load('img/enemy.png')
-    enemy_attacked = pygame.image.load("img/enemyattacked.png")
-    
+
+    enemy_image = pygame.image.load(resource_path('img/enemy.png'))
+    enemy_attacked = pygame.image.load(resource_path("img/enemyattacked.png"))
+
     font = pygame.font.Font(None, 36)
-    hp_text = pygame.font.Font("fonts/Oswald.ttf", 20)
-    game_text = pygame.font.Font('fonts/Oswald.ttf', 24)
+    hp_text = pygame.font.Font(resource_path("fonts/Oswald.ttf"), 20)
+    game_text = pygame.font.Font(resource_path('fonts/Oswald.ttf'), 24)
 
     fill_color = pygame.Color('#223953')
     border_color = pygame.Color('#000000')
-    pygame.mixer.music.load("ost/fight1.mp3")
+    pygame.mixer.music.load(resource_path("ost/fight1.mp3"))
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(25)
     
     pause = Pause(screen)
     inventory = Inventory()
     menu_ability_manager = MenuAbilityManager()
+    
+    
     player = Player(0, 390, 1000, 500, menu_ability_manager)
+    player.load_player()
+    
+    
     enemy = Enemy(WIDTH - 650, 200, "—Knight—",  enemy_w, enemy_h, 10, 20)
     skills = MenuAbilityManager()
     player_attack_calculated = player.attack // 5
@@ -78,6 +96,15 @@ def main():
 
     current_menu = main_menu
 
+    def fade():
+        fade_surface = pygame.Surface((WIDTH, HEIGHT))
+        fade_surface.fill((0, 0, 0))
+
+        for alpha in range(0, 300, 2):
+            fade_surface.set_alpha(alpha)
+            screen.blit(fade_surface, (0, 0))
+            pygame.display.flip()
+            pygame.time.delay(10)
 
     def enemyAttack():
         pygame.time.delay(1000)
@@ -112,7 +139,7 @@ def main():
             pygame.display.flip()
 
             pygame.time.wait(1000)
-
+    
         if player_turn and current_menu == submenus["Skill"] and not paused and not enemy.attacked_already:
             menu_ability_manager = MenuAbilityManager()
             skill_name = current_menu.options[current_menu.state]
@@ -166,14 +193,14 @@ def main():
                                         enemy.health = max(enemy.health - reduced_damage, 0)
                                         player_turn = False
                                         player_attack_sound.play()
-                                        pygame.time.wait(500)
+                                        pygame.time.wait(250)
         
                                         enemy.image = enemy_attacked  
                                         screen.blit(pygame.transform.scale(bg, (WIDTH, HEIGHT)), (0, 0))
                                         enemy.draw(screen, font, enemy_attacked)
                                         pygame.display.flip()
                                         
-                                        pygame.time.wait(1000) 
+                                        pygame.time.wait(250) 
 
                                         enemy.image = enemy_image 
                                         pygame.display.flip()
@@ -201,6 +228,9 @@ def main():
                             elif main_menu.state == 2:
                                 if selected_option == "Confirm":
                                     running = False
+                                    pygame.mixer.music.stop()
+                                    fade()
+                                    return 'ENVIRONMENT'
                                 else:
                                     current_menu = main_menu
                                     menu_current = menu_rect
@@ -234,14 +264,14 @@ def main():
                                         player_turn = False
                                         player_attack_sound.play()
                                         
-                                        pygame.time.wait(500)
+                                        pygame.time.wait(250)
         
                                         enemy.image = enemy_attacked  
                                         screen.blit(pygame.transform.scale(bg, (WIDTH, HEIGHT)), (0, 0))
                                         enemy.attacked(screen, enemy_attacked)
                                         pygame.display.flip()
                                         
-                                        pygame.time.wait(1000) 
+                                        pygame.time.wait(250) 
 
                                         enemy.image = enemy_image 
                                         pygame.display.flip()
@@ -274,6 +304,8 @@ def main():
                             elif main_menu.state == 2:
                                 if selected_option == "Confirm":
                                     running = False
+                                    pygame.mixer.music.stop()
+                                    return 'ENVIRONMENT'
                                 else:
                                     current_menu = main_menu
                                     menu_current = menu_rect
@@ -295,7 +327,21 @@ def main():
         
         if not paused:
             enemy.handle_mouse_over(screen, paused) 
-            
+        
+        if enemy.health <= 0:
+            running = False
+            pygame.mixer.music.stop()
+            player.gain_exp(random.randint(100, 200))
+            fade()
+            return 'ENVIRONMENT'
+        
+        elif player.health <= 0:
+            running = False
+            pygame.mixer.music.stop()
+            fade()
+            return 'START'
+        
+        
         screen.blit(menu_current, (0, HEIGHT-150))
         player.draw(screen, hp_text)
         current_menu.draw(screen, font)
@@ -318,7 +364,7 @@ def main():
                 text = game_text.render(f"{enemy.name} attacked and dealt {enemyDamageText} damage", True, (0, 0, 0))
                 text_rect = text.get_rect(center=(WIDTH // 2, (HEIGHT // 2) + 240))
                 screen.blit(text, text_rect) 
-            
+        
         pygame.display.flip()
 
         clock.tick(FPS)

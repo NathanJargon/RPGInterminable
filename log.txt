@@ -1,0 +1,5 @@
+pyinstaller --noconfirm --onefile --windowed --icon "C:/Nash/Projects Folder/Interminable-RPG/img/logo.ico" --name "Interminable" --add-data "C:/Nash/Projects Folder/Interminable-RPG/fonts;fonts/" --add-data "C:/Nash/Projects Folder/Interminable-RPG/img;img/" --add-data "C:/Nash/Projects Folder/Interminable-RPG/main;main/" --add-data "C:/Nash/Projects Folder/Interminable-RPG/ost;ost/" --add-data "C:/Nash/Projects Folder/Interminable-RPG/savefiles;savefiles/" 
+--hidden-import "pygame" --hidden-import "pygame.gfxdraw"  "C:/Nash/Projects Folder/Interminable-RPG/main.py"
+
+
+hidden-import "pygame" "pygame.gfxdraw"
